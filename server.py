@@ -115,7 +115,7 @@ def login():
         email = request.form['email']
         admin_key = request.form.get('admin_key', None)
 
-        user_query = text("SELECT * FROM Users WHERE Email = :email")
+        user_query = text("SELECT * FROM "Users" WHERE Email = :email")
         user = g.conn.execute(user_query, {'email': email}).fetchone()
 
         if user:
@@ -132,7 +132,7 @@ def login():
         else:
             user_id = generate_unique_user_id()
             insert_user_query = text("""
-                INSERT INTO Users (User_ID, Names, Email, Manager_Role_Level, Student_Grade_Level) 
+                INSERT INTO "Users" (User_ID, Names, Email, Manager_Role_Level, Student_Grade_Level) 
                 VALUES (:user_id, :name, :email, :manager_role_level, :student_grade_level)
             """)
             manager_role_level = 1 if admin_key == '8111' else None
@@ -171,10 +171,10 @@ def user_dashboard():
         return redirect('/login')
     
     borrow_records_query = text("""
-        SELECT Book.Book_Name, Return&Borrow_Record.Borrow_Date, Return&Borrow_Record.Due_Date, Return&Borrow_Record.Return_Date, Book.Status
-        FROM Return&Borrow_Record
-        JOIN Book ON Return&Borrow_Record.Book_ID = Book.Book_ID
-        WHERE Return&Borrow_Record.User_ID = :user_id
+        SELECT "Book".Book_Name, "Return&Borrow_Record".Borrow_Date, "Return&Borrow_Record".Due_Date, "Return&Borrow_Record".Return_Date, "Book".Status
+        FROM “Return&Borrow_Record”
+        JOIN "Book" ON "Return&Borrow_Record".Book_ID = "Book".Book_ID
+        WHERE "Return&Borrow_Record".User_ID = :user_id
     """)
     records = g.conn.execute(borrow_records_query, {'user_id': user_id}).fetchall()
 
@@ -192,18 +192,18 @@ def borrow_book():
         borrow_date = request.form['borrow_date']
         due_date = request.form['due_date']
 
-        book_query = text("SELECT Status FROM Book WHERE Book_ID = :book_id")
+        book_query = text("SELECT Status FROM “Book” WHERE Book_ID = :book_id")
         book = g.conn.execute(book_query, {'book_id': book_id}).fetchone()
 
         if not book or book['Status'] != 'Available':
             flash("This book is not available for borrowing.", "error")
             return redirect('/borrow')
 
-        update_book_query = text("UPDATE Book SET Status = 'Borrowed' WHERE Book_ID = :book_id")
+        update_book_query = text("UPDATE "Book" SET Status = 'Borrowed' WHERE Book_ID = :book_id")
         g.conn.execute(update_book_query, {'book_id': book_id})
 
         borrow_record_query = text("""
-            INSERT INTO Return&Borrow_Record (User_ID, Book_ID, Borrow_Date, Due_Date) 
+            INSERT INTO "Return&Borrow_Record" (User_ID, Book_ID, Borrow_Date, Due_Date) 
             VALUES (:user_id, :book_id, :borrow_date, :due_date)
         """)
         g.conn.execute(borrow_record_query, {
@@ -216,7 +216,7 @@ def borrow_book():
         flash("Book borrowed successfully!", "success")
         return redirect('/user_dashboard')
 
-    available_books_query = text("SELECT * FROM Book WHERE Status = 'Available'")
+    available_books_query = text("SELECT * FROM “Book” WHERE Status = 'Available'")
     books = g.conn.execute(available_books_query).fetchall()
     return render_template('borrow.html', books=books)
 
@@ -232,15 +232,15 @@ def return_book():
         return_date = request.form['return_date']
 
         update_record_query = text("""
-            UPDATE Return&Borrow_Record SET Return_Date = :return_date WHERE Record_ID = :record_id AND User_ID = :user_id
+            UPDATE "Return&Borrow_Record" SET Return_Date = :return_date WHERE Record_ID = :record_id AND User_ID = :user_id
         """)
         g.conn.execute(update_record_query, {'return_date': return_date, 'record_id': record_id, 'user_id': user_id})
         
-        book_id_query = text("SELECT Book_ID FROM Return&Borrow_Record WHERE Record_ID = :record_id AND User_ID = :user_id")
+        book_id_query = text("""SELECT Book_ID FROM "Return&Borrow_Record" WHERE Record_ID = :record_id AND User_ID = :user_id""")
         book_id = g.conn.execute(book_id_query, {'record_id': record_id, 'user_id': user_id}).fetchone()
 
         if book_id:
-            update_book_status_query = text("UPDATE Book SET Status = 'Available' WHERE Book_ID = :book_id")
+            update_book_status_query = text("UPDATE "Book" SET Status = 'Available' WHERE Book_ID = :book_id")
             g.conn.execute(update_book_status_query, {'book_id': book_id[0]})
             g.conn.commit()
 
@@ -248,10 +248,10 @@ def return_book():
         return redirect('/user_dashboard')
 
     borrowed_books_query = text("""
-        SELECT Return&Borrow_Record.Record_ID, Book.Book_Name, Return&Borrow_Record.Borrow_Date, Return&Borrow_Record.Due_Date
-        FROM Return&Borrow_Record
-        JOIN Book ON Return&Borrow_Record.Book_ID = Book.Book_ID
-        WHERE Return&Borrow_Record.User_ID = :user_id AND Return&Borrow_Record.Return_Date IS NULL
+        SELECT "Return&Borrow_Record".Record_ID, "Book".Book_Name, "Return&Borrow_Record".Borrow_Date, "Return&Borrow_Record".Due_Date
+        FROM "Return&Borrow_Record"
+        JOIN "Book" ON "Return&Borrow_Record".Book_ID = "Book".Book_ID
+        WHERE "Return&Borrow_Record".User_ID = :user_id AND "Return&Borrow_Record".Return_Date IS NULL
     """)
     borrowed_books = g.conn.execute(borrowed_books_query, {'user_id': user_id}).fetchall()
     return render_template('return.html', borrowed_books=borrowed_books)
@@ -268,10 +268,10 @@ def admin_dashboard():
         user_id = request.form['user_id']
 
         user_records_query = text("""
-            SELECT Book.Book_Name, Return&Borrow_Record.Borrow_Date, Return&Borrow_Record.Due_Date, Return&Borrow_Record.Return_Date, Book.Status
-            FROM Return&Borrow_Record
-            JOIN Book ON Return&Borrow_Record.Book_ID = Book.Book_ID
-            WHERE Return&Borrow_Record.User_ID = :user_id
+            SELECT "Book".Book_Name, "Return&Borrow_Record".Borrow_Date, "Return&Borrow_Record".Due_Date, "Return&Borrow_Record".Return_Date, "Book".Status
+            FROM "Return&Borrow_Record"
+            JOIN "Book" ON "Return&Borrow_Record".Book_ID = "Book".Book_ID
+            WHERE "Return&Borrow_Record".User_ID = :user_id
         """)
         user_records = g.conn.execute(user_records_query, {'user_id': user_id}).fetchall()
 
@@ -291,7 +291,7 @@ def add_book():
         status = request.form['status']
 
         add_book_query = text("""
-            INSERT INTO Book (Book_Name, Categories, Condition, Status) 
+            INSERT INTO "Book" (Book_Name, Categories, Condition, Status) 
             VALUES (:book_name, :category, :condition, :status)
         """)
         g.conn.execute(add_book_query, {
@@ -314,7 +314,7 @@ def delete_book():
 
     book_id = request.form['book_id']
 
-    delete_book_query = text("DELETE FROM Book WHERE Book_ID = :book_id")
+    delete_book_query = text("DELETE FROM "Book" WHERE Book_ID = :book_id")
     g.conn.execute(delete_book_query, {'book_id': book_id})
     g.conn.commit()
     flash("Book deleted successfully!", "success")
