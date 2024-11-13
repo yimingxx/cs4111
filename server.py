@@ -135,8 +135,8 @@ def login():
                 INSERT INTO "Users" (User_ID, Names, Email, Manager_Role_Level, Student_Grade_Level) 
                 VALUES (:user_id, :name, :email, :manager_role_level, :student_grade_level)
             """)
-            manager_role_level = 1 if admin_key == '8111' else None
-            student_grade_level = 1 if manager_role_level is None else None
+            manager_role_level > 0 if admin_key == '8111' else None
+            student_grade_level > 0 if manager_role_level is None else None
             
             g.conn.execute(insert_user_query, {
                 'user_id': user_id,
