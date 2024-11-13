@@ -1,0 +1,29 @@
+</html>
+<h1>Check All Books</h1>
+<table>
+    <tr>
+        <th>Book ID</th>
+        <th>Book Name</th>
+        <th>Category</th>
+        <th>Condition</th>
+        <th>Status</th>
+        <th>Delete</th>
+    </tr>
+    {% for book in books %}
+    <tr>
+        <td>{{ book.Book_ID }}</td>
+        <td>{{ book.Book_Name }}</td>
+        <td>{{ book.Categories }}</td>
+        <td>{{ book.Condition }}</td>
+        <td>{{ book.Status }}</td>
+        <td>
+            <form method="POST" action="/delete_book">
+                <input type="hidden" name="book_id" value="{{ book.Book_ID }}">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="/add_book">Add a new book</a>
+</html>

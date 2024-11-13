@@ -1,0 +1,39 @@
+</html> 
+    <h1>Admin Dashboard</h1>
+
+    <h2>Search User Borrow History</h2>
+    <form method="POST" action="/admin_dashboard">
+        <label for="user_id">Enter User ID:</label>
+        <input type="text" id="user_id" name="user_id" required>
+        <button type="submit">Search</button>
+    </form>
+    
+    {% if user_records %}
+    <h2>Borrow History for User ID: {{ user_id }}</h2>
+    <table>
+        <tr>
+            <th>Book Name</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+        </tr>
+        {% for record in user_records %}
+        <tr>
+            <td>{{ record.Book_Name }}</td>
+            <td>{{ record.Borrow_Date }}</td>
+            <td>{{ record.Due_Date }}</td>
+            <td>{{ record.Return_Date or "Not returned" }}</td>
+            <td>{{ record.Status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+      {% if user_id is not none %}
+        <p>No borrow history found for User ID: {{ user_id }}</p>
+      {% endif %}
+    {% endif %}
+    
+    <a href="/add_book">Add a new book</a>
+    <a href="/check_books">Check all books' conditions</a>
+</html>    

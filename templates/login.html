@@ -1,0 +1,54 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<head>
+  <title>Register a account</title>
+  <style>
+    /* Add your CSS styles here */
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+    .alert-success { background-color: #dff0d8; }
+    .alert-error { background-color: #f2dede; }
+  </style>
+</head>
+<body>
+  <a href="/">Home</a>
+  <h2>Registration</h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="/login">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email"><br>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <label for="admin_key">Admin Key (optional):</label>
+    <input type="password" id="admin_key" name="admin_key">
+    
+    <input type="submit" value="Register">
+  </form>
+</body>
+</html>

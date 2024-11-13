@@ -1,0 +1,17 @@
+<html>
+    <h1>Borrow a Book</h1>
+    <form method="POST" action="/borrow">
+        <label for="book_id">Select Book:</label>
+        <select name="book_id" id="book_id">
+            {% for book in books %}
+                <option value="{{ book.Book_ID }}">{{ book.Book_Name }}</option>
+            {% endfor %}
+        </select>
+        <label for="borrow_date">Borrow Date:</label>
+        <input type="date" id="borrow_date" name="borrow_date" required>
+        <label for="due_date">Due Date:</label>
+        <input type="date" id="due_date" name="due_date" required>
+        <button type="submit">Borrow</button>
+    </form>
+    
+</html>

@@ -1,0 +1,27 @@
+<html>
+    <h1>Return a Book</h1>
+    <form method="POST" action="/return">
+        <label for="record_id">Select Book to Return:</label>
+        <select name="record_id" id="record_id">
+            {% for book in borrowed_books %}
+                <option value="{{ book.Record_ID }}">{{ book.Book_Name }} (Borrowed on {{ book.Borrow_Date }})</option>
+            {% endfor %}
+        </select>
+        <label for="return_date">Return Date:</label>
+        <input type="date" id="return_date" name="return_date" required>
+        <button type="submit">Return</button>
+    </form>
+    <h1>Return a Book</h1>
+    <form method="POST" action="/return">
+        <label for="record_id">Select Book to Return:</label>
+        <select name="record_id" id="record_id">
+            {% for book in borrowed_books %}
+                <option value="{{ book.Record_ID }}">{{ book.Book_Name }} (Borrowed on {{ book.Borrow_Date }})</option>
+            {% endfor %}
+        </select>
+        <label for="return_date">Return Date:</label>
+        <input type="date" id="return_date" name="return_date" required>
+        <button type="submit">Return</button>
+    </form>
+            
+</html>

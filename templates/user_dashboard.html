@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libary System - User Dashboard</title>
+</head>
+<body>
+    <a href="/">Home</a>
+    <h1>Welcome, {{ name }}!</h1>
+<h2>Your Borrowing History</h2>
+<table>
+    <tr>
+        <th>Book Name</th>
+        <th>Borrow Date</th>
+        <th>Due Date</th>
+        <th>Return Date</th>
+        <th>Status</th>
+    </tr>
+    {% for record in records %}
+    <tr>
+        <td>{{ record.Book_Name }}</td>
+        <td>{{ record.Borrow_Date }}</td>
+        <td>{{ record.Due_Date }}</td>
+        <td>{{ record.Return_Date or "Not returned" }}</td>
+        <td>{{ record.Status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="/borrow">Borrow a new book</a>
+<a href="/return">Return a book</a>
+</body>
+</html>
