@@ -115,7 +115,7 @@ def login():
         email = request.form['email']
         admin_key = request.form.get('admin_key', None)
 
-        user_query = text("SELECT * FROM "Users" WHERE Email = :email")
+        user_query = text("""SELECT * FROM "Users" WHERE Email = :email""")
         user = g.conn.execute(user_query, {'email': email}).fetchone()
 
         if user:
@@ -192,14 +192,14 @@ def borrow_book():
         borrow_date = request.form['borrow_date']
         due_date = request.form['due_date']
 
-        book_query = text("SELECT Status FROM “Book” WHERE Book_ID = :book_id")
+        book_query = text("""SELECT Status FROM “Book” WHERE Book_ID = :book_id""")
         book = g.conn.execute(book_query, {'book_id': book_id}).fetchone()
 
         if not book or book['Status'] != 'Available':
             flash("This book is not available for borrowing.", "error")
             return redirect('/borrow')
 
-        update_book_query = text("UPDATE "Book" SET Status = 'Borrowed' WHERE Book_ID = :book_id")
+        update_book_query = text("""UPDATE "Book" SET Status = 'Borrowed' WHERE Book_ID = :book_id""")
         g.conn.execute(update_book_query, {'book_id': book_id})
 
         borrow_record_query = text("""
@@ -216,7 +216,7 @@ def borrow_book():
         flash("Book borrowed successfully!", "success")
         return redirect('/user_dashboard')
 
-    available_books_query = text("SELECT * FROM “Book” WHERE Status = 'Available'")
+    available_books_query = text("""SELECT * FROM “Book” WHERE Status = 'Available'""")
     books = g.conn.execute(available_books_query).fetchall()
     return render_template('borrow.html', books=books)
 
@@ -240,7 +240,7 @@ def return_book():
         book_id = g.conn.execute(book_id_query, {'record_id': record_id, 'user_id': user_id}).fetchone()
 
         if book_id:
-            update_book_status_query = text("UPDATE "Book" SET Status = 'Available' WHERE Book_ID = :book_id")
+            update_book_status_query = text("""UPDATE "Book" SET Status = 'Available' WHERE Book_ID = :book_id""")
             g.conn.execute(update_book_status_query, {'book_id': book_id[0]})
             g.conn.commit()
 
@@ -314,7 +314,7 @@ def delete_book():
 
     book_id = request.form['book_id']
 
-    delete_book_query = text("DELETE FROM "Book" WHERE Book_ID = :book_id")
+    delete_book_query = text("""DELETE FROM "Book" WHERE Book_ID = :book_id""")
     g.conn.execute(delete_book_query, {'book_id': book_id})
     g.conn.commit()
     flash("Book deleted successfully!", "success")
@@ -326,7 +326,7 @@ def check_books():
         flash("Only admins can view book conditions.", "error")
         return redirect('/login')
 
-    books_query = text("SELECT * FROM Book")
+    books_query = text('SELECT * FROM "Book"')
     books = g.conn.execute(books_query).fetchall()
 
     return render_template('check_books.html', books=books)
